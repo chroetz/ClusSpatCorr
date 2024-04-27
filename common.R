@@ -6,7 +6,7 @@ library(doParallel)
 
 set.seed(0)
 
-dirNames <- c("results", "regressionData", "plots", "latex")
+dirNames <- c("results", "regressionData", "plots")
 for (dirName in dirNames) if (!dir.exists(dirName)) dir.create(dirName)
 
 

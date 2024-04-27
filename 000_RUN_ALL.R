@@ -7,8 +7,7 @@ requiredPackages <- c(
   "sandwich",
   "fixest",
   "foreach",
-  "doParallel",
-  "gt")
+  "doParallel")
 missingPackages <- requiredPackages[!requiredPackages %in% .packages(all = TRUE)]
 lapply(missingPackages, install.packages) |> invisible()
 
