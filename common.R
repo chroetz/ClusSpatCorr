@@ -130,12 +130,20 @@ clusterNames <- c("Gid1", "Gid0", "Year", "Gid0Year", "Gid1Year")
 getClusters <- function(data, clusterName) {
   switch(
     clusterName,
-    Gid1 = data$GID_1,
     Gid0 = data$GID_0,
+    Gid1 = data$GID_1,
     Year = data$theYear,
     Gid0Year = paste(data$GID_0, data$theYear),
     Gid1Year = paste(data$GID_1, data$theYear))
 }
+
+clusterLabels <- c(
+  Gid0 = "Country",
+  Gid1 = "Region",
+  Year = "Year",
+  Gid0Year = "CountryYear",
+  Gid1Year = "RegionYear")
+
 
 
 loadRegressionData <- function(dataName) {
@@ -230,6 +238,7 @@ attach(
     gid0EuCore,
     gid0Large,
     clusterNames,
+    clusterLabels,
     convertReferenceNames,
     compareNumeric,
     getClusters,

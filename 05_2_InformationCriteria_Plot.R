@@ -6,14 +6,22 @@ source("common.R")
 
 
 plotIc <- function(data) {
-  ggplot(
-    data,
-    aes(x = lag, y = value, color = clusterName, linetype = criterion, shape = criterion)
-  ) +
+  plt <- 
+    data |> 
+    mutate(termLabel = termLabels[termName]) |> 
+    mutate(clusterLabel = clusterLabels[clusterName]) |> 
+    ggplot(aes(x = lag, y = value, color = clusterLabel, linetype = criterion, shape = criterion)) +
     geom_line() + geom_point() +
-    facet_wrap(vars(termName), scales = "free_y", ncol=2) +
+    facet_wrap(vars(termLabel), scales = "free_y", ncol=2, labeller=label_parsed) +
     geom_hline(yintercept=0) +
-    scale_x_continuous(breaks=c(0:10), minor_breaks=NULL)
+    scale_x_continuous(breaks=c(0:10), minor_breaks=NULL) +
+    xlab("Lag (year)") +
+    ylab("Information criterium difference to trivial model") +
+    guides(
+      color = guide_legend(title = "Clustering"),
+      shape = guide_legend(title = "Criterion"),
+      linetype = guide_legend(title = "Criterion"))
+  shift_legend(plt)
 }
 
 

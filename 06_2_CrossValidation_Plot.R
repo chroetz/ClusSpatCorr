@@ -9,13 +9,14 @@ plotCv <- function(cvData) {
   plt <- 
     cvData |> 
     mutate(termLabel = termLabels[termName]) |> 
-    ggplot(aes(x = lag, y = cv_mean, color = clusterName)) +
+    mutate(clusterLabel = clusterLabels[clusterName]) |> 
+    ggplot(aes(x = lag, y = cv_mean, color = clusterLabel)) +
     geom_line() + geom_point() +
     geom_hline(yintercept=0) +
     facet_wrap(vars(termLabel), scales = "free_y", ncol=2, labeller=label_parsed) +
     scale_x_continuous(breaks=c(0:10), minor_breaks=NULL) +
     xlab("Lag (year)") +
-    ylab("Differnce of L2 loss to trivial model") +
+    ylab(expression(paste(L^2, " loss differnce to trivial model"))) +
     guides(color = guide_legend(title = "Clustering"))
   shift_legend(plt)
 }
