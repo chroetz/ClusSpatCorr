@@ -6,6 +6,7 @@ source("common.R")
 
 
 analyzeCorr <- function(kind, corrVec, selection, name) {
+  selection[is.na(selection)] <- FALSE 
   x <- corrVec[selection & !is.na(corrVec)]
   probs <- seq(0, 1, 0.05)
   bind_cols(
@@ -38,12 +39,23 @@ corrMatGid1 <-
   column_to_rownames("GID_1") |> 
   as.matrix()
 
-corrVecYear <- corrMatYear[upper.tri(corrMatYear, diag=FALSE)]
-timeDiff <- (col(corrMatYear)-row(corrMatYear))[upper.tri(corrMatYear, diag=FALSE)]
+distMatGid1Raw <- 
+  read_csv("results/distanceMatrix_Gid1.csv") |> 
+  column_to_rownames("GID_1") |> 
+  as.matrix()
+distMatGid1 <- corrMatGid1
+distMatGid1[] <- NA_real_
+distMatGid1[rownames(distMatGid1Raw), colnames(distMatGid1Raw)] <- distMatGid1Raw
 
-corrVecGid1 <- corrMatGid1[upper.tri(corrMatGid1, diag=FALSE)]
-colGid1 <- colnames(corrMatGid1)[col(corrMatGid1)[upper.tri(corrMatGid1, diag=FALSE)]]
-rowGid1 <- rownames(corrMatGid1)[row(corrMatGid1)[upper.tri(corrMatGid1, diag=FALSE)]]
+sel <- upper.tri(corrMatYear, diag=FALSE)
+corrVecYear <- corrMatYear[sel]
+timeDiff <- (col(corrMatYear)-row(corrMatYear))[sel]
+
+sel <- upper.tri(corrMatGid1, diag=FALSE)
+corrVecGid1 <- corrMatGid1[sel]
+distVecGid1 <- distMatGid1[sel]
+colGid1 <- colnames(corrMatGid1)[col(corrMatGid1)[sel]]
+rowGid1 <- rownames(corrMatGid1)[row(corrMatGid1)[sel]]
 colGid0 <- str_sub(colGid1, end=3)
 rowGid0 <- str_sub(rowGid1, end=3)
 colEu28 <- colGid0 %in% gid0Eu28
@@ -59,6 +71,41 @@ corrData <- bind_rows(
   analyzeCorr("spatial", corrVecGid1, colGid0 != rowGid0, "different country"),
   analyzeCorr("spatial", corrVecGid1, colGid0 != rowGid0 & colEu28 & rowEu28, "different EU28 countries"),
   analyzeCorr("spatial", corrVecGid1, colGid0 != rowGid0 & colEuCore & rowEuCore, "different EU 1995 countries"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 1e5, "distance < 100km"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 2e5, "distance < 200km"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 5e5, "distance < 500km"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 1e6, "distance < 1000km"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 2e6, "distance < 2000km"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 1e5 & colGid0 != rowGid0, "distance < 100km and different country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 2e5 & colGid0 != rowGid0, "distance < 200km and different country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 5e5 & colGid0 != rowGid0, "distance < 500km and different country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 1e6 & colGid0 != rowGid0, "distance < 1000km and different country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 2e6 & colGid0 != rowGid0, "distance < 2000km and different country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 1e5 & colGid0 == rowGid0, "distance < 100km and same country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 2e5 & colGid0 == rowGid0, "distance < 200km and same country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 5e5 & colGid0 == rowGid0, "distance < 500km and same country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 1e6 & colGid0 == rowGid0, "distance < 1000km and same country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 2e6 & colGid0 == rowGid0, "distance < 2000km and same country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 > 1e5, "distance > 100km"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 > 2e5, "distance > 200km"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 > 5e5, "distance > 500km"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 > 1e6, "distance > 1000km"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 > 2e6, "distance > 2000km"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 > 1e5 & colGid0 != rowGid0, "distance > 100km and different country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 > 2e5 & colGid0 != rowGid0, "distance > 200km and different country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 > 5e5 & colGid0 != rowGid0, "distance > 500km and different country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 > 1e6 & colGid0 != rowGid0, "distance > 1000km and different country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 > 2e6 & colGid0 != rowGid0, "distance > 2000km and different country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 > 1e5 & colGid0 == rowGid0, "distance > 100km and same country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 > 2e5 & colGid0 == rowGid0, "distance > 200km and same country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 > 5e5 & colGid0 == rowGid0, "distance > 500km and same country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 > 1e6 & colGid0 == rowGid0, "distance > 1000km and same country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 > 2e6 & colGid0 == rowGid0, "distance > 2000km and same country"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 1e5 & colGid0 != rowGid0 & !colEu28 & !rowEu28, "distance < 100km and different country not EU"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 2e5 & colGid0 != rowGid0 & !colEu28 & !rowEu28, "distance < 200km and different country not EU"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 5e5 & colGid0 != rowGid0 & !colEu28 & !rowEu28, "distance < 500km and different country not EU"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 1e6 & colGid0 != rowGid0 & !colEu28 & !rowEu28, "distance < 1000km and different country not EU"),
+  analyzeCorr("spatial", corrVecGid1, distVecGid1 < 2e6 & colGid0 != rowGid0 & !colEu28 & !rowEu28, "distance < 2000km and different country not EU"),
   lapply(
     gid0Large, 
     \(gid0) analyzeCorr("spatial", corrVecGid1, colGid0 == gid0 & rowGid0 == gid0, gid0)) |> bind_rows()
