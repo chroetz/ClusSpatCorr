@@ -47,5 +47,7 @@ linesOut <-
   c(linesIn[1:15], newArgLine, linesIn[15:49], printLines, linesIn[52:length(linesIn)]) |> 
   str_replace_all(fixed("str(seed) + '.npy'"), "str(seed) + '_' + str(suffix) + '.npy'") |> 
   str_replace_all(fixed("str(Nboot*len(seeds)) + '.npy'"), "str(Nboot*len(seeds)) + '_' + str(suffix) + '.npy'") |> 
-  str_replace_all(fixed("'Fig1.pdf'"), "'Fig1_' + str(suffix) + '.pdf'")
+  str_replace_all(fixed("'Fig1.pdf'"), "'Fig1_' + str(suffix) + '.pdf'") |>
+  str_replace(fixed("],90,axis=0"), "],95,axis=0") |> 
+  str_replace(fixed("],10,axis=0"), "],5,axis=0")
 writeLines(linesOut, "datacode/plot_Fig1_MOD.py")

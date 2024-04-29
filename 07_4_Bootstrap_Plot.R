@@ -28,7 +28,7 @@ runPlotFig1 <- function(clusterName) {
     str_subset(patternRange) |> 
     str_extract(patternRange, group=1:2) |>
     as.numeric()
-  file.copy(sprintf("Fig1_%s.pdf", suffix), "../plots/")
+  file.copy(sprintf("Fig1_%s.pdf", suffix), "../plots/", overwrite=TRUE)
   return(tibble(
     clusterName = clusterName,
     median = committedLossMedian[1], 
