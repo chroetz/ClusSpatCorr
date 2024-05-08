@@ -1,5 +1,5 @@
 Requirements:
-- R version 4.1 or higher (with command line tool Rscript in search path)
+- R version 4.2.3 (with command line tool Rscript in search path)
 - Python (tested with Python 3.11.5) with packages
   + pandas (version > 2.0)
   + numpy

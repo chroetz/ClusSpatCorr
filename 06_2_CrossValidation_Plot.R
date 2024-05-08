@@ -5,7 +5,7 @@ source("common.R")
 # Define Functions --------------------------------------------------------
 
 
-plotCv <- function(cvData) {
+plotCv <- function(cvData, modelName) {
   plt <- 
     cvData |> 
     mutate(termLabel = termLabels[termName]) |> 
@@ -15,8 +15,8 @@ plotCv <- function(cvData) {
     geom_hline(yintercept=0) +
     facet_wrap(vars(termLabel), scales = "free_y", ncol=2, labeller=label_parsed) +
     scale_x_continuous(breaks=c(0:10), minor_breaks=NULL) +
-    xlab("Lag (year)") +
-    ylab(expression(paste(L^2, " loss differnce to trivial model"))) +
+    xlab("Number of lag years") +
+    ylab(rlang::expr(paste(L^2, " loss difference to ", !!modelName ," model"))) +
     guides(color = guide_legend(title = "Clustering"))
   shift_legend(plt)
 }
@@ -31,12 +31,19 @@ cvData <- read_csv("results/crossValidation.csv")
 plt <- 
   cvData |> 
   filter(kind == "forward") |> 
-  plotCv()
+  plotCv("trivial")
 ggsave(plot=plt, "plots/cvForward.pdf", width=7, height=8)
   
+cvFull <- 
+  cvData |> 
+  filter(kind == "backward", lag == 10) |> 
+  select(clusterName, termName, cv_mean) |> 
+  rename(v0 = cv_mean)
 plt <- 
   cvData |> 
-  filter(kind == "backward") |> 
-  plotCv()
+  filter(kind == "backward") |>
+  left_join(cvFull, join_by(clusterName, termName)) |>
+  mutate(cv_mean = cv_mean - v0) |>
+  plotCv("trivial")
 ggsave(plot=plt, "plots/cvBackward.pdf", width=7, height=8)
 

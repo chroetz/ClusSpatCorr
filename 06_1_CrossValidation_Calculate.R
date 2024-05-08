@@ -96,7 +96,7 @@ cvData <-
       data = dataNoFe,
       models = models, 
       clusterName = clusterName,
-      nReps = 100,
+      nReps = 1000,
       nFolds = 10,
       level = 0.05,
       nCores = nCores)

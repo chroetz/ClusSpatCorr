@@ -9,9 +9,18 @@ requiredPackages <- c(
   "foreach",
   "doParallel",
   "s2",
-  "sf")
+  "sf",
+  "cowplot",
+  "remotes",
+  "rlang")
 missingPackages <- requiredPackages[!requiredPackages %in% .packages(all = TRUE)]
 lapply(missingPackages, install.packages) |> invisible()
+
+# May need following specific version of ggplot2 for placing the legend correctly.
+# remotes::install_version(
+#   "ggplot2", 
+#   version = "3.4.1", 
+#   repos = "http://cran.us.r-project.org")
 
 
 
