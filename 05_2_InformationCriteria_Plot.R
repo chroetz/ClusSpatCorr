@@ -14,7 +14,7 @@ plotIc <- function(data, modelName) {
     facet_wrap(vars(termLabel), scales = "free_y", ncol=2, labeller=label_parsed) +
     geom_hline(yintercept=0) +
     scale_x_continuous(breaks=c(0:10), minor_breaks=NULL) +
-    xlab("Number of lag years") +
+    xlab("Number of lag years in model") +
     ylab(sprintf("Information criterion difference to %s model", modelName)) +
     guides(
       shape = guide_legend(title = "Criterion"),
@@ -34,6 +34,7 @@ ic0 <-
   filter(kind == "trivial") |> 
   select(clusterName, criterion, value) |> 
   rename(v0 = value)
+
 plt <- 
   icData |>
   filter(kind == "forward", criterion %in% c("AIC", "BIC")) |>
@@ -45,19 +46,13 @@ plt <-
   plotIc("trivial")
 ggsave(plot=plt, "plots/icForward.pdf", width=7, height=8)
 
-
-icFull <- 
-  icData |> 
-  filter(kind == "full") |> 
-  select(clusterName, criterion, value) |> 
-  rename(v0 = value)
 plt <-
   icData |>
   filter(kind == "backward", criterion %in% c("AIC", "BIC")) |>
-  left_join(icFull, join_by(clusterName, criterion)) |> 
+  left_join(ic0, join_by(clusterName, criterion)) |> 
   mutate(
     value = value - v0,
     Adjusted = ifelse(clusterName == "Gid0Year", "Yes", "No")
   ) |> 
-  plotIc("full")
+  plotIc("trivial")
 ggsave(plot=plt, "plots/icBackward.pdf", width=7, height=8)
