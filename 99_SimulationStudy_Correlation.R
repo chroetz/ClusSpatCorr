@@ -74,10 +74,10 @@ mean(abs(matrix(rowMeans(covClusterByRegion), nrow=2) - covTrue))
 mean(abs(matrix(rowMeans(covClusterByYear), nrow=2) - covTrue)) # by far the lowest
 mean(abs(matrix(rowMeans(covNoCluster), nrow=2) - covTrue))
 
-# mean squared error of covariance estimates
-mean((covClusterByRegion - as.vector(covTrue))^2)
-mean((covClusterByYear - as.vector(covTrue))^2)  # by far the lowest
-mean((covNoCluster - as.vector(covTrue))^2)
+# root mean squared error of covariance estimates
+sqrt(mean((covClusterByRegion - as.vector(covTrue))^2))
+sqrt(mean((covClusterByYear - as.vector(covTrue))^2))  # by far the lowest
+sqrt(mean((covNoCluster - as.vector(covTrue))^2))
 
 
 # CONCLUSION
